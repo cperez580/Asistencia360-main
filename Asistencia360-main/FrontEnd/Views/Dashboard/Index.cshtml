@@ -1,0 +1,554 @@
+﻿
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-secondary text-center rounded p-4">
+        <div class="row">
+            <div class="col-8">
+                <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link active text-white" id="status-pill-tab" data-bs-toggle="pill"  
+                                data-bs-target="#status-pill" type="button" role="tab" aria-controls="status-pill"
+                                aria-selected="true">
+                            Estado
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link text-white" id="companies-pill-tab" data-bs-toggle="pill"
+                                data-bs-target="#companies-pill" type="button" role="tab" aria-controls="companies-pill"
+                                aria-selected="false">
+                            Empresas
+                        </button>
+                    </li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link text-white" id="others-pill-tab" data-bs-toggle="pill"
+                                data-bs-target="#others-pill" type="button" role="tab" aria-controls="others-pill"
+                                aria-selected="false">
+                            Otros
+                        </button>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-2">
+                <input type="date" class="form-control" id="start-date" onchange="updateCharts()">
+            </div>
+            <div class="col-2">
+                <input type="date" class="form-control" id="end-date" onchange="updateCharts()">
+            </div>
+        </div>
+        <div class="tab-content mt-4" id="pills-tabContent">
+            <div class="tab-pane fade show active" id="status-pill" role="tabpanel" aria-labelledby="status-pill-tab">
+                <div class="row">
+                    <div class="col-3">
+                        <h1 id="ticketsLabel" class="text-center mt-3">0</h1>
+                        <br />
+                        <h1 class="text-center">Tiquetes</h1>
+                    </div>
+                    <div class="col-4">
+                        <canvas id="gaugestatusChart"></canvas>
+                    </div>
+                    <div class="col-4">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-3">
+                        <table class="table table-hover table-bordered border-white ">
+                            <thead>
+                                <tr class="table-secondary">
+                                    <th>Estado</th>
+                                    <th>Tiquetes</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Nuevo</td>
+                                    <td id="newLabel"></td>
+                                </tr>
+                                <tr>
+                                    <td>Abierto</td>
+                                    <td id="openLabel"></td>
+                                </tr>
+                                <tr>
+                                    <td>Reaperturado</td>
+                                    <td id="reopenedLabel"></td>
+                                </tr>
+                                <tr>
+                                    <td>Cerrado</td>
+                                    <td id="closedLabel"></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-4 pt-5">
+                        <h2 id="slaLabel" class="text-center mt-3">0</h2>
+                        <br />
+                        <h2 class="text-center">SLA por vencer</h2>
+                    </div>
+                    <div class="col-4">
+                        <canvas id="ticketsxtypeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane fade show" id="companies-pill" role="tabpanel" aria-labelledby="companies-pill-tab">
+                <div class="row">
+                    <div class="col-4">
+                        <canvas id="servicesxCompanyChart"></canvas>
+                    </div>
+                    <div class="col-4">
+                        <canvas id="ticketsxCompanyChart"></canvas>
+                    </div>
+                    <div class="col-4">
+                        <table class="table table-hover table-bordered border-white ">
+                            <thead>
+                                <tr class="table-secondary">
+                                    <th>Empresa</th>
+                                    <th>Tiquetes</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tByCompany-tbody">
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+            </div>
+            <div class="tab-pane fade show" id="others-pill" role="tabpanel" aria-labelledby="others-pill-tab">
+                <div class="row">
+                    <div class="col-6">
+                        <canvas id="openticketsxtechnicianChart"></canvas>
+                    </div>
+                    <div class="col-6">
+                        <canvas id="TOPticketsxserviceChart"></canvas>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <canvas id="TOPticketsxcustomerChart"></canvas>
+                    </div>
+                    <div class="col-6">
+                        <canvas id="TOPticketsxinternalserviceChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>    
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    
+    var date = new Date();
+    document.getElementById('start-date').valueAsDate = new Date(date.getFullYear(), date.getMonth(), 1);
+    document.getElementById('end-date').valueAsDate = date;
+
+    function fetchData() {
+        var start = $("#start-date").val();
+        var end = $("#end-date").val();
+        $.ajax({
+            url: "/Dashboard/LoadIndex?start=" + start + "&end=" + end,
+            method: 'GET',
+            datatype: "json",
+            success: function (data) {
+                Chart.defaults.color = "#FFF";
+                class circularChart extends Chart.DoughnutController {
+                    draw() {
+                        super.draw(arguments);
+                    }
+                }
+
+                circularChart.id = 'circularGauge';
+                circularChart.defaults = Chart.DoughnutController.defaults;
+                circularChart.defaults = {
+                    cutout: '60%',
+                    circumference: 180,
+                    rotation: 270
+                };
+                Chart.register(circularChart);
+
+                data = JSON.parse(data);
+
+                var tiquetsLabel = document.getElementById('ticketsLabel');
+                tiquetsLabel.innerHTML = data.tStatus.totalTickets;
+                slaLabel.innerHTML = data.tStatus.slaAbouttoExpire;
+                newLabel.innerHTML = data.tStatus.newTickets;
+                openLabel.innerHTML = data.tStatus.openTickets;
+                reopenedLabel.innerHTML = data.tStatus.reopenedTickets;
+                closedLabel.innerHTML = data.tStatus.closedTickets;
+
+                var tStatus = [data.tStatus.newTickets,
+                              data.tStatus.openTickets,
+                              data.tStatus.reopenedTickets,
+                              data.tStatus.closedTickets];
+                
+                var tGaugeStatus = [data.tStatus.nonclosedTickets,
+                              data.tStatus.closedTickets];
+
+                const tableBody = document.getElementById("tByCompany-tbody");
+                tableBody.innerHTML = '';
+                for(let i = 0; i < data.tByCompany.labels.length; i++){
+                    const newRow = document.createElement("tr");
+                    const newCell = document.createElement("td");
+                    newCell.textContent = data.tByCompany.labels[i];
+                    const newCell2 = document.createElement("td");
+                    newCell2.textContent = data.tByCompany.values[i];
+                    newRow.appendChild(newCell);
+                    newRow.appendChild(newCell2);
+                    tableBody.appendChild(newRow);
+                }
+
+                
+                create_tStatusChart(tStatus);
+                create_tGaugeStatusChart(tGaugeStatus);
+                create_tByTypeChart(data.tByType);
+                create_otByTechnicianChart(data.otByTechnician);
+                create_sByCompanyChart(data.sByCompany);
+                create_tByCompanyChart(data.tByCompany);
+                create_tByServiceChart(data.tByService);
+                create_tByCustomerChart(data.tByCustomer);
+                create_tByInternalServiceChart(data.tByInternalService);
+
+            },
+            error: function (error) {
+                console.error('Error fetching data:', error);
+            }
+        });
+    }
+    
+    function create_tStatusChart(values) {
+        
+        const ctx1 = document.getElementById('statusChart');
+
+        new Chart(ctx1, {
+            type: 'pie',
+            data: {
+                labels: ['Nuevo', 'Abierto', 'Reaperturado', 'Cerrado'],
+                datasets: [{
+                    data: values,
+                    borderWidth: 0,
+                    backgroundColor: ["#77F2FF", "#E31D00", "#FF5616", "#12BC2C"]
+                }]
+            },
+            options: {
+                aspectRatio: 2,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'right',
+                        align: 'center'
+                    }
+                }
+            }
+        });
+    }
+
+    function create_tGaugeStatusChart(values) {
+
+        const ctx2 = document.getElementById('gaugestatusChart');
+
+        new Chart(ctx2, {
+            type: 'circularGauge',
+            data: {
+                labels: ['Abierto', 'Cerrado'],
+                datasets: [{
+                    data: values,
+                    borderWidth: 0,
+                    backgroundColor: ["#FF5616", "#12BC2C"]
+                }]
+            },
+            options: {
+                aspectRatio: 2,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'right',
+                        align: 'center'
+                    }
+                }
+            }
+        });
+    }
+
+    function create_tByTypeChart(data) {
+        const ctx3 = document.getElementById('ticketsxtypeChart');
+
+        new Chart(ctx3, {
+            type: 'pie',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    data: data.values,
+                    borderWidth: 0,
+                    backgroundColor: ["#FF8658", "#E31D00", "#77F2FF", "#4B7CCC"]
+                }]
+            },
+            options: {
+                aspectRatio: 1.5,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Tiquetes por Tipo',
+                        font: {
+                            size: 18
+                        }
+                    },
+                    legend: {
+                        display: true,
+                        position: 'right',
+                        align: 'center'
+                    }
+                }
+            }
+        });
+    }
+
+
+    function create_otByTechnicianChart(data) {
+        const ctx5 = document.getElementById('openticketsxtechnicianChart');
+
+        new Chart(ctx5, {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Tiquetes',
+                    data: data.values,
+                    borderWidth: 1,
+                    backgroundColor: ["#EB1616"]
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Tiquetes Abiertos por Técnico',
+                        font: {
+                            size: 18
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function create_sByCompanyChart(data) {
+        const ctx6 = document.getElementById('servicesxCompanyChart');
+
+        new Chart(ctx6, {
+            type: 'pie',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    data: data.values,
+                    borderWidth: 0,
+                    backgroundColor: ["#FF8658", "#E31D00", "#77F2FF", "#4B7CCC"]
+                }]
+            },
+            options: {
+                aspectRatio: 1.5,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Servicios por Empresa',
+                        font: {
+                            size: 18
+                        }
+                    },
+                    legend: {
+                        display: true,
+                        position: 'right',
+                        align: 'center'
+                    }
+                }
+            }
+        });
+    }
+
+    function create_tByCompanyChart(data) {
+        const ctx7 = document.getElementById('ticketsxCompanyChart');
+
+        new Chart(ctx7, {
+            type: 'pie',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    data: data.values,
+                    borderWidth: 0,
+                    backgroundColor: ["#FF8658", "#E31D00", "#77F2FF", "#4B7CCC"]
+                }]
+            },
+            options: {
+                aspectRatio: 1.5,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Tiquetes por Empresa',
+                        font: {
+                            size: 18
+                        }
+                    },
+                    legend: {
+                        display: true,
+                        position: 'right',
+                        align: 'center'
+                    }
+                }
+            }
+        });
+    }
+
+    function create_tByServiceChart(data) {
+    
+        const ctx8 = document.getElementById('TOPticketsxserviceChart');
+        new Chart(ctx8, {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Tiquetes',
+                    data: data.values,
+                    borderWidth: 1,
+                    backgroundColor: ["#EB1616"]
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Top Tiquetes por Servicio',
+                        font: {
+                            size: 18
+                        }
+                    }
+                }
+            }     
+        });
+    }
+
+    function create_tByCustomerChart(data) {
+
+        const ctx9 = document.getElementById('TOPticketsxcustomerChart');
+        new Chart(ctx9, {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Tiquetes',
+                    data: data.values,
+                    borderWidth: 1,
+                    backgroundColor: ["#EB1616"]
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Top Tiquetes por Cliente',
+                        font: {
+                            size: 18
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function create_tByInternalServiceChart(data) {
+
+        const ctx8 = document.getElementById('TOPticketsxinternalserviceChart');
+        new Chart(ctx8, {
+            type: 'bar',
+            data: {
+                labels: data.labels,
+                datasets: [{
+                    label: 'Tiquetes',
+                    data: data.values,
+                    borderWidth: 1,
+                    backgroundColor: ["#EB1616"]
+                }]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Top Tiquetes por Servicio Interno',
+                        font: {
+                            size: 18
+                        }
+                    }
+                }
+            }
+        });
+    }
+
+    function destroyCharts() {
+        let gaugestatusChart = Chart.getChart("gaugestatusChart"); // <canvas> id
+        if (gaugestatusChart != undefined) {
+            gaugestatusChart.destroy();
+        }
+        let statusChart = Chart.getChart("statusChart"); // <canvas> id
+        if (statusChart != undefined) {
+            statusChart.destroy();
+        }
+        let ticketsxtypeChart = Chart.getChart("ticketsxtypeChart"); // <canvas> id
+        if (ticketsxtypeChart != undefined) {
+            ticketsxtypeChart.destroy();
+        }
+        let servicesxCompanyChart = Chart.getChart("servicesxCompanyChart"); // <canvas> id
+        if (servicesxCompanyChart != undefined) {
+            servicesxCompanyChart.destroy();
+        }
+        let ticketsxCompanyChart = Chart.getChart("ticketsxCompanyChart"); // <canvas> id
+        if (ticketsxCompanyChart != undefined) {
+            ticketsxCompanyChart.destroy();
+        }
+        let openticketsxtechnicianChart = Chart.getChart("openticketsxtechnicianChart"); // <canvas> id
+        if (openticketsxtechnicianChart != undefined) {
+            openticketsxtechnicianChart.destroy();
+        }
+        let TOPticketsxserviceChart = Chart.getChart("TOPticketsxserviceChart"); // <canvas> id
+        if (TOPticketsxserviceChart != undefined) {
+            TOPticketsxserviceChart.destroy();
+        }
+        let TOPticketsxcustomerChart = Chart.getChart("TOPticketsxcustomerChart"); // <canvas> id
+        if (TOPticketsxcustomerChart != undefined) {
+            TOPticketsxcustomerChart.destroy();
+        }
+        let TOPticketsxinternalserviceChart = Chart.getChart("TOPticketsxinternalserviceChart"); // <canvas> id
+        if (TOPticketsxinternalserviceChart != undefined) {
+            TOPticketsxinternalserviceChart.destroy();
+        }
+    }
+
+    function updateCharts() {
+        destroyCharts();
+        fetchData();
+    }
+
+    fetchData();
+</script>
+

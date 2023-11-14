@@ -1,0 +1,79 @@
+﻿@model FrontEnd.Models.InventoryViewModel
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-secondary rounded p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h3 class="mb-0">Crear Inventario</h3>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                    <div class="form-group">
+                        <label asp-for="Title" class="control-label"></label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="OperativeSystem" class="control-label"></label>
+                        <input asp-for="OperativeSystem" class="form-control" />
+                        <span asp-validation-for="OperativeSystem" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Version" class="control-label"></label>
+                        <input asp-for="Version" class="form-control" />
+                        <span asp-validation-for="Version" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Type" class="control-label"></label>
+                        <input asp-for="Type" class="form-control" />
+                        <span asp-validation-for="Type" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Purpose" class="control-label"></label>
+                        <input asp-for="Purpose" class="form-control" />
+                        <span asp-validation-for="Purpose" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="IpAddress" class="control-label"></label>
+                        <input asp-for="IpAddress" class="form-control" />
+                        <span asp-validation-for="IpAddress" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="AssetNumber" class="control-label"></label>
+                        <input asp-for="AssetNumber" class="form-control" />
+                        <span asp-validation-for="AssetNumber" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="SerialNumber" class="control-label"></label>
+                        <input asp-for="SerialNumber" class="form-control" />
+                        <span asp-validation-for="SerialNumber" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Cpu" class="control-label"></label>
+                        <input asp-for="Cpu" class="form-control" />
+                        <span asp-validation-for="Cpu" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="CpuCore" class="control-label"></label>
+                        <input asp-for="CpuCore" class="form-control" />
+                        <span asp-validation-for="CpuCore" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Ram" class="control-label"></label>
+                        <input asp-for="Ram" class="form-control" />
+                        <span asp-validation-for="Ram" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Crear" class="btn btn-primary mt-3" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

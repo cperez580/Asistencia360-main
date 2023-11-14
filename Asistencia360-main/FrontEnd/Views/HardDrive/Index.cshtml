@@ -1,0 +1,96 @@
+﻿@model IEnumerable<FrontEnd.Models.HardDriveViewModel>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<script>
+    function fillTable() {
+        $("#harddriveTable").DataTable({
+
+            "destroy": true,
+            "processing": true, // for show progress bar
+            "serverSide": false, // for process server side
+            "filter": true, // this is for disable filter (search box)
+            "orderMulti": false, // for disable multiple column at once
+
+            "ajax": {
+                "url": "/HardDrive/LoadIndex,
+                "type": "POST",
+                "datatype": "json"
+            },
+            "columns": [
+                { "data": "inventories.0.title", "name": "Equipo", "autoWidth": true },
+                { "data": "title", "name": "Nombre", "autoWidth": true },
+                { "data": "size", "name": "Tamaño", "autoWidth": true },
+                {
+                    "render": function (data, type, full, meta) {
+                        console.log(full);
+                    }
+                }
+            ],
+            "language": {
+                "decimal": "",
+                "emptyTable": "No hay datos disponibles en la tabla",
+                "info": "Mostrando _START_ a _END_ de _TOTAL_ registros",
+                "infoEmpty": "Mostrando 0 a 0 de 0 registros",
+                "infoFiltered": "(filtrado de _MAX_ registros totales)",
+                "infoPostFix": "",
+                "thousands": ".",
+                "lengthMenu": "Mostrar _MENU_ registros",
+                "loadingRecords": "Cargando...",
+                "processing": "",
+                "search": "Buscar:",
+                "zeroRecords": "No se encontraron registros que coincidan",
+                "paginate": {
+                    "first": "Primera",
+                    "last": "Última",
+                    "next": "Siguiente",
+                    "previous": "Anterior"
+                },
+                "aria": {
+                    "sortAscending": ": activa para ordenar la columna de forma ascendente",
+                    "sortDescending": ": activa para ordenar la columna de forma descendente"
+                }
+            }
+        });
+</script>
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-secondary text-center rounded p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h3 class="mb-0">Listado de Discos Duros</h3>
+            <a class="btn btn-primary" href=@Url.Action("Create", "HardDrive")>
+                <i class="fa fa-plus"></i> Agregar Disco Duro
+            </a>
+        </div>
+        <div class="tab-content" id="pills-tabContent">
+            <div class="tab-pane fade show active">
+                <div class="table-responsive-md">
+                    <table id="harddriveTable" class="table table-hover" width="100%">
+                        <thead>
+                            <tr>
+                                <th>Equipo</th>
+                                <th>Nombre</th>
+                                <th>Tamaño</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script src="~/WebStyles/js/datatables/jquery.dataTables.min.js"></script>
+<script src="~/WebStyles/js/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="~/WebStyles/js/datatables/dataTables.buttons.min.js"></script>
+<script src="~/WebStyles/js/datatables/buttons.bootstrap4.min.js"></script>
+<script src="~/WebStyles/js/datatables/jszip.min.js"></script>
+<script src="~/WebStyles/js/datatables/pdfmake.min.js"></script>
+<script src="~/WebStyles/js/datatables/vfs_fonts.js"></script>
+<script src="~/WebStyles/js/datatables/buttons.html5.min.js"></script>
+<script src="~/WebStyles/js/datatables/buttons.print.min.js"></script>
+<script src="~/WebStyles/js/datatables/buttons.colVis.min.js"></script>
+<script src="~/WebStyles/js/Tiquetes/listOpen.js"></script>

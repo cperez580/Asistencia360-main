@@ -1,0 +1,39 @@
+﻿@model FrontEnd.Models.DepartmentViewModel
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-secondary rounded p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h3 class="mb-0">Crear Departamento</h3>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-warning"></div>
+                    <div class="form-group">
+                        <label asp-for="CompanyId" class="control-label"></label>
+                        @Html.DropDownListFor(model=>model.CompanyId, new SelectList(Model.Companies, "CompanyId", "Title"), "-- Seleccione una Empresa --", new { @class = "form-control" })
+                        <span asp-validation-for="CompanyId" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Title" class="control-label"></label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Description" class="control-label"></label>
+                        <input asp-for="Description" class="form-control" />
+                        <span asp-validation-for="Description" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Crear" class="btn btn-primary mt-3" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

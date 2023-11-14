@@ -1,0 +1,222 @@
+﻿@model FrontEnd.Models.TicketViewModel
+
+
+@{
+    ViewData["Title"] = "Edit";
+    ViewData["ticketId"] = Model.ticketId;
+    ViewBag.TicketId = Model.ticketId;
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+
+
+@using (Html.BeginForm("Edit", "Ticket", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-secondary rounded p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h3 class="mb-0">Seguimiento De Tiquete</h3>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                    <form id="formGestion" asp-action="Edit">
+
+                        @Html.HiddenFor(model=>model.ticketId)
+                        @Html.HiddenFor(model=>model.title)
+                        @Html.HiddenFor(model=>model.description)
+                        @Html.HiddenFor(model=>model.customerId)
+                        @Html.HiddenFor(model=>model.StartDate)
+                        @Html.HiddenFor(model=>model.status)
+                        @Html.HiddenFor(model=>model.internalServiceId)
+                        
+
+                    <div class="form-group">
+                            <label asp-for="serviceId" class="control-label"></label>
+                           
+                                @Html.DropDownListFor(model => model.serviceId, ViewBag.ServiceInfoList as SelectList, "-- Select Service --",
+                                new { @class = "form-control", id = "SelectorService"})
+                               
+                            <span asp-validation-for="serviceId" class="text-warning"></span>
+                    </div>
+
+
+                    <div class="form-group">
+                        <label asp-for="Type" class="control-label"></label>
+                        
+                        @*         @Html.EditorFor(model => model.Type, new { @class = "form-control", id = "tipoServicio", type = "text", disabled = "disabled" }) *@
+                        @Html.EditorFor(model => model.Type, new { htmlAttributes = new {  @class = "form-control", id = "tipoServicio",
+                        type = "text", disabled = "disabled" } })
+                        @Html.HiddenFor(model => model.Type, new { id = "hiddenTipoServicio" })
+                            <span asp-validation-for="Type" class="text-warning"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="priority" class="control-label"></label>
+                        
+                        @Html.EditorFor(model => model.priority, new { htmlAttributes = new {  @class = "form-control", id = "tipoPrioridad",
+                        type = "text", disabled = "disabled" } })
+                            @Html.HiddenFor(model => model.priority, new { id = "hiddenPriority" })
+                        <span asp-validation-for="priority" class="text-warning"></span>
+                    </div>
+
+
+                    <div class="form-group">
+@*                         @Html.LabelFor(model => model.solutionTime)
+                        @Html.EditorFor(model => model.solutionTime, new { @class = "form-control" }) *@
+                            <label asp-for="solutionTime" class="control-label"></label>
+                            <input asp-for="solutionTime" class="form-control" />
+                            <span asp-validation-for="solutionTime" class="text-warning"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="inventoryId" class="control-label"></label>
+                        
+                        @Html.EditorFor(model => model.inventoryId, new { @class = "form-control" })
+                        <span asp-validation-for="inventoryId" class="text-warning"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label asp-for="faqId" class="control-label"></label>
+                        
+                        @Html.EditorFor(model => model.faqId, new { @class = "form-control" })
+                        <span asp-validation-for="faqId" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Guardar" class="btn btn-primary mt-3" />
+                    </div>
+
+                    </form>
+                </div>
+            </div>
+        </div>
+</div>
+
+    <!-- Agregar Commentario-->
+    <!-- Agrega la vista parcial de comentario aquí -->
+
+
+       <div id="commentPartial">
+        @Html.HiddenFor(model=>model.ticketId)
+        @{ Html.RenderPartial("~/Views/Comment/_Create.cshtml", new FrontEnd.Models.CommentViewModel(){ticketId = Model.ticketId}); }
+       </div>
+
+
+
+    <!-- Lista Comments-->
+
+    <div class="container-fluid pt-4 px-4">
+        <div class="bg-secondary rounded p-4">
+            <div class="d-flex align-items-center justify-content-between mb-4">
+                <h3 class="mb-0">Comentarios Tiquete</h3>
+            </div>
+            <div class="row">
+
+                <table class="table">
+                    @Html.HiddenFor(model=>model.Comments)
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Mensaje</th>
+                            <th>Fecha de Creación</th>
+                            <!-- Agrega más columnas si es necesario -->
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var comment in Model.Comments)
+                        {
+                            <tr>
+                                <td>@comment.commentId</td>
+                                <td>@comment.message</td>
+                                <td>@comment.creationDate.ToString("yyyy-MM-dd HH:mm:ss")</td>
+                                <!-- Agrega más columnas si es necesario -->
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+
+            </div>
+        </div>
+    </div>
+
+    <!-- Otros campos del formulario -->
+    @section Scripts {
+    @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+        <script>
+            $(document).ready(function () {
+                // Obtener el valor de ticketId del modelo actual
+                var ticketId = @Model.ticketId;
+
+                // Establecer el valor de ticketId en el campo oculto de la vista parcial
+                $('#ticketIdInPartial').val(ticketId);
+            });
+        </script>
+}
+
+
+    <script>
+        $(document).ready(function () {
+            console.log('Comments:', @Html.Raw(Json.Serialize(Model.Comments)));
+            console.log('Comments:', @Html.Raw(Json.Serialize(Model)));          
+        });
+    </script>
+
+
+
+    <script>
+        $(document).ready(function () {
+            // Manejar el cambio en la selección del servicio
+            $('#SelectorService').change(function () {
+                // Obtener el valor seleccionado del servicio
+                var selectedService = $(this).val();
+
+                // Imprimir en la consola
+                console.log('Service selected: ' + selectedService);
+
+                var parts = selectedService.split('-');
+                var type = parts[0];
+                var priority = parts[1];
+                var serviceID = parseInt(parts[2]);
+
+                console.log('Type: ' + type);
+                console.log('Priority: ' + priority);
+                console.log('serviceId: ' + serviceID);
+
+                // Agregar un nuevo campo serviceId con el nuevo valor
+                $('<input>').attr({
+                    type: 'hidden',
+                    name: 'serviceId',
+                    value: serviceID
+                }).appendTo('formGestion');
+                
+                $('#hiddenIdServicio').val(serviceID);
+                $('#tipoServicio').val(type);
+                $('#hiddenTipoServicio').val(type);
+                $('#tipoPrioridad').val(priority);
+                $('#hiddenPriority').val(priority);
+
+
+                $('formGestion').find("input[name='Type']").val(type);
+                $('formGestion').find("input[name='priority']").val(priority);
+                $('formGestion').find("input[name='serviceId']").val(serviceID);
+
+
+                console.log('Form data:', $('formGestion').serialize());
+                console.log('Payload antes de la solicitud POST:', $('form').serialize());
+                return true;
+
+                
+            });
+        });
+    </script>
+
+}
+
+    
+
+
+

@@ -1,0 +1,72 @@
+﻿@model FrontEnd.Models.UserModels.UserViewModel
+
+@{
+    ViewData["Title"] = "Register";
+    Layout = "~/Views/Shared/_Layout_Login.cshtml";
+}
+
+
+<div class="container-fluid">
+    <div class="row h-100 align-items-center justify-content-center" style="min-height: 100vh;">
+        <div class="col-12 col-sm-8 col-md-6 col-lg-5 col-xl-4">
+            <div class="bg-secondary rounded p-4 p-sm-5 my-4 mx-3">
+
+            <form asp-action="Register">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="d-flex align-items-center justify-content-between mb-3">
+                <a href=@Url.Action("Login","User") class="">
+                    <h4 class="text-primary">Asistencia360</h4>
+                </a>
+                <h4>Registro</h4>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Name" class="form-control" />
+                <label asp-for="Name" class="control-label login-text"></label>
+                <span asp-validation-for="Name" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="LastName" class="form-control" />
+                <label asp-for="LastName" class="control-label login-text"></label>
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="IdNumber" class="form-control" />
+                <label asp-for="IdNumber" class="control-label login-text"></label>
+                <span asp-validation-for="IdNumber" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Email" class="form-control" />
+                <label asp-for="Email" class="control-label login-text" type="email"></label>
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-floating mb-3">
+                <input asp-for="Password" class="form-control" />
+                <label asp-for="Password" class="control-label login-text" type="password"></label>
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="CompanyId" class="form-label"></label>
+                @*<input asp-for="CompanyId" class="form-control" />*@
+                @Html.DropDownListFor(model=>model.CompanyId, new SelectList(Model.Companies, "CompanyId", "Title"), "-- Seleccione una Empresa --", new { @class = "form-select" })
+                <span asp-validation-for="CompanyId" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="DepartmentId" class="control-label"></label>
+                @*<input asp-for="DepartmentId" class="form-control" />*@
+                @Html.DropDownListFor(model=>model.DepartmentId, new SelectList(Model.Departments, "DepartmentId", "Title"), "-- Seleccione un Departamento --", new { @class = "form-select" })
+                <span asp-validation-for="DepartmentId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Registrarme" class="btn btn-primary py-3 w-100 mb-4" />
+                <p class="text-center mb-0">¿Ya tienes una cuenta? <a href=@Url.Action("Login","User")>Inicia sesión</a></p>
+            </div>
+        </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+@*@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}
+*@

@@ -1,0 +1,49 @@
+﻿@model FrontEnd.Models.FAQViewModel
+
+@{
+    ViewData["Title"] = "Create";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container-fluid pt-4 px-4">
+    <div class="bg-secondary rounded p-4">
+        <div class="d-flex align-items-center justify-content-between mb-4">
+            <h3 class="mb-0">Agregar Pregunta</h3>
+        </div>
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="Create">
+                    <div asp-validation-summary="ModelOnly" class="text-warning"></div>
+                    <div class="form-group">
+                        <label asp-for="Title" class="control-label"></label>
+                        <input asp-for="Title" class="form-control" />
+                        <span asp-validation-for="Title" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Symptom" class="control-label"></label>
+                        <input asp-for="Symptom" class="form-control" />
+                        <span asp-validation-for="Symptom" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Problem" class="control-label"></label>
+                        <input asp-for="Problem" class="form-control" />
+                        <span asp-validation-for="Problem" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Solution" class="control-label"></label>
+                        <input asp-for="Solution" class="form-control" />
+                        <span asp-validation-for="Solution" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Notes" class="control-label"></label>
+                        <input asp-for="Notes" class="form-control" />
+                        <span asp-validation-for="Notes" class="text-warning"></span>
+                    </div>
+                    <div class="form-group">
+                        <input type="submit" value="Crear" class="btn btn-primary mt-3" />
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
