@@ -13,6 +13,7 @@ Util.ConnectionString = connString;
 
 #endregion
 
+
 // Add services to the container.
 
 builder.Services.AddControllers();

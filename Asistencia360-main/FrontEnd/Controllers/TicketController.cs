@@ -7,7 +7,10 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.CodeAnalysis.Differencing;
 using System.Collections.Generic;
+using System.Net.Security;
+using System.Net;
 using System.Reflection;
+using System.Security.Cryptography.X509Certificates;
 
 namespace FrontEnd.Controllers
 {
@@ -18,6 +21,8 @@ namespace FrontEnd.Controllers
         private UserHelper userHelper;
         private InternalServiceHelper internalServiceHelper;
         private CommentHelper commentHelper;
+
+
 
         public TicketController()
         {
